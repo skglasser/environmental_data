@@ -1,0 +1,12 @@
+---
+title: "Sonja's Project Homepage"
+author: "Sonja"
+date: "11/24/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Welcome to Sonja's class page!
