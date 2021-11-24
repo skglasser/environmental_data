@@ -1,0 +1,213 @@
+---
+title: "Pre-Lab 06 SGlasser"
+author: "Sonja"
+date: "13/10/2021"
+output: html_document
+---
+
+## Lab 06: Introduction to Inference
+
+#### Learning objectives, technical skills and concepts:
+
+- Sampling distribution: sample standard deviation vs standard error
+- Building custom functions
+- T-tests
+- Resampling
+- R formula notation
+- R object structure
+
+```{r SSE mean function}
+
+require(palmerpenguins)
+head(penguins)
+
+#Try running all code outsid of funciton before putting into function
+#x = penguins$bill_depth_mm
+#na.x<-is.na(x)
+#x2<- x[!na.x]
+#sd.x2=sd(x2)
+#n=length(x2)
+#sd.x2/(sqrt(n))
+
+sse_mean = function(x)
+    { na.x<-is.na(x)
+     
+          x2<- x[!na.x]
+    
+                 sd.x2=sd(x2)
+        
+                 n=length(x2)
+
+        sd.x2/(sqrt(n))
+      }
+
+sse_mean(penguins$body_mass_g)
+sse_mean(mtcars$mpg)
+sse_mean(penguins$bill_depth_mm)
+    
+```
+
+```{r}
+boxplot(flipper_length_mm ~ species, data = penguins)
+
+```
+
+```{r}
+dat_pen = subset(penguins, species != "Gentoo")
+boxplot(flipper_length_mm ~ species, data = dat_pen)
+```
+
+```{r}
+dat_pen = droplevels(subset(penguins, species != "Gentoo"))
+{
+  par(mfrow = c(1, 2))
+  boxplot(flipper_length_mm ~ species, data = penguins)
+  boxplot(flipper_length_mm ~ species, data = dat_pen)
+}
+```
+
+```{r}
+set.seed(123)
+
+flipper_shuffled = sample(penguins$flipper_length_mm, replace = TRUE)
+par(mfrow = c(1, 2))
+boxplot(flipper_length_mm ~ species, data = penguins)
+boxplot(flipper_shuffled ~ penguins$species, xlab = "species")
+```
+Note that in the previous resampling, we shuffled the flipper length separately from the species labels. This effectively breaks the structure in the data. By that, I mean it destroys any association between flipper length and the species label. This is exactly the spirit of a Frequentist null hypothesis in which:
+
+The flipper lengths for the penguin species are drawn from the same population of all flipper lengths.
+
+*Monte Carlo* resampling breaks up associations, therefore it’s a great way to simulate what would happen if the null hypothesis were true. In other words, it’s a great way to simulate a null distribution
+
+Another class of resampling methods is *bootstrapping* . The primary difference between bootstrap and Monte Carlo resampling is that bootstrapping does not destroy the associations in the data. In other words, it samples entire rows of your data. In yet other words, it shuffles rows (with replacement), but does not shuffle the values in columns.
+
+T-tests - A Frequentist Approach
+Classical t-test: Adelie and Chinstrap penguins
+The two-sample t-test is a great starting point to compare the mean values of two groups:
+
+```{r}
+t.test(dat_pen$flipper_length_mm ~ dat_pen$species)
+```
+You’re going to perform a resampling version of a t-test on penguin flipper length.
+```{r}
+set.seed(1)
+flipper_shuffled = sample(dat_pen$flipper_length_mm)
+
+boxplot(flipper_shuffled ~ dat_pen$species)
+```
+
+```{r}
+t_test_1 = t.test(flipper_shuffled ~ dat_pen$species)
+t_test_1
+```
+The t-test output does not support rejecting a null hypothesis that the two flipper lengths are different between the two species.
+
+
+Difference of means
+The t-test great for comparing the means of two groups. We can see the group means in the t-test output:
+
+```{r}
+t_test = t.test(dat_pen$flipper_length_mm ~ dat_pen$species)
+t_test
+
+t_test$estimate
+
+
+```
+```{r calculate diff between means}
+
+diff_observed = round(diff(t_test$estimate), digits = 3)
+print(diff_observed, digits = 3)
+```
+
+```{r another way to calculate diff between means}
+
+agg_means = aggregate(
+  flipper_length_mm ~ species, 
+  data = dat_pen, 
+  FUN = mean, 
+  na.rm = TRUE)
+diff_observed = diff(agg_means[, 2])
+
+agg_means
+diff_observed
+
+```
+
+The number of individuals of each species in the data are
+```{r, Sample sizes}
+table(dat_pen$species)
+```
+Resampling with replacement is the same thing as randomly sampling 68 flipper lengths in one group and 152 in another.
+
+```{r}
+n_1 = 68
+n_2 = 152
+
+dat_1 = sample(dat_pen$flipper_length_mm, n_1, replace = TRUE)
+dat_2 = sample(dat_pen$flipper_length_mm, n_2, replace = TRUE)
+
+diff_simulated = 
+  mean(dat_1, na.rm = TRUE) - mean(dat_2, na.rm = TRUE)
+```
+
+```{r}
+print(c(observed = diff_observed, simulated = diff_simulated))
+```
+
+```{r}
+x = dat_pen$flipper_length_mm
+n_1 = 68
+n_2 = 152
+
+dat_1 = sample(x, n_1, replace = TRUE)
+dat_2 = sample(x, n_2, replace = TRUE)
+
+diff_simulated = 
+  mean(dat_1, na.rm = TRUE) - mean(dat_2, na.rm = TRUE)
+```
+
+I could modify the code I used to resample and wrap it into a function:
+
+```{r}
+two_group_resample = function(x, n_1, n_2) 
+  {
+    dat_1 = sample(x, n_1, replace = TRUE)
+    dat_2 = sample(x, n_2, replace = TRUE)
+      difference_in_means = 
+              mean(dat_1, na.rm = TRUE) - mean(dat_2, na.rm = TRUE)
+ return(difference_in_means)
+}
+
+set.seed(54321)
+two_group_resample(dat_pen$flipper_length_mm, 68, 152)
+```
+
+```{r}
+n = 2000
+mean_differences = c()
+for (i in 1:n)
+{
+  mean_differences = c(
+    mean_differences,
+    two_group_resample(dat_pen$flipper_length_mm, 68, 152)
+  )
+}
+hist(mean_differences)
+```
+
+```{r}
+sum(abs(mean_differences) >= diff_observed)
+```
+```{r}
+t_test = t.test(flipper_shuffled ~ dat_pen$species)
+
+str(t_test)
+
+t_test$estimate
+
+```
+
+
+

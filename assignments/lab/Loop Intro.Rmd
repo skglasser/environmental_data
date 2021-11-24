@@ -1,0 +1,50 @@
+---
+title: "Intro to Loops"
+author: "Sonja"
+date: "22/9/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+here("C:/Users/Zonj/Documents/Universites_Research/UMass/courses/ECO 602_634 environ stats/environmental_data")
+```
+
+Loop: 
+
+Initiation
+Sequences
+Variables 
+
+check recording of lecture
+                        \/ loop variable
+loop initiator ->    for(i in 1:100) 
+                     {         ^ loop sequence
+               #do somthing
+                        }
+
+Why do loops? 
+
+Perform the same function repeated times.
+
+1 assign first value in the seq to loop variable 
+2 evaluates loop body 
+3 assigns the nect value in the sew to the loop variable 
+4 evaluated loop body 
+5 repeat 3 and 4 until the last value in the sequence 
+6 exits
+
+### loop variable
+
+the loop variable can be any set of number, does not have to start at 1, i.e. 1:10, could be 5:10
+
+The loop variable, i, will take on the values 1, 2, 3, successively... If you define the loop variable outside of the loop the new variable will overrun the the i loop variable. 
+
+### loop sequences
+
+sequence of values the loop variable will take, can be a set of lists, not only integers. 
+Values do not have to be in order. 
+
+### Value of i after the loop? 
+After the loop the variable i will have the value of the last value in the loop sequence. 
+
+

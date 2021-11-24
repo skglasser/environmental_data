@@ -1,0 +1,148 @@
+---
+title: "Pre-Lab 05"
+author: "Sonja"
+date: "6/10/2021"
+output: html_document
+---
+
+---
+title: "S.Glasser Lab 5"
+author: "Sonja"
+date: "6/10/2021"
+output: html_document
+---
+
+### Lab 5: Uncertainty, Samples, and Populations
+
+
+#### Learning objectives, technical skills and concepts:
+ 
+ 
+- Random number generation
+
+- Distribution Functions
+
+- Building custom functions
+
+- Fitting deterministic models
+
+- Calculating residuals
+
+- Defining and quantifying error
+
+
+```{r setup, include=FALSE}
+
+```
+
+Ricker function f(x)=a*x*e^−b*x
+
+```{r, Ricker Function}
+ricker_fun = function(x, a, b) 
+{
+  return(a * x * exp(-b * x))
+}
+```
+
+
+```{r}
+curve(
+  ricker_fun(x, 1, 1), 
+  from = 0, to = 5, add = FALSE, 
+  main = "Ricker function: a = 1, b = 1",
+  ylab = "f(x)", xlab = "x")
+```
+
+```{r, Exponential Function}
+
+exp_fun = function(x, a, b) 
+{
+  return(a * exp(-b * x))
+}
+
+```
+
+```{r}
+curve(
+  exp_fun(x, 1, 0.5), 
+  from = 0, to = 10, add = FALSE, 
+  main = "Exponential function: a = 1, b = 0.5",
+  ylab = "f(x)", xlab = "x")
+```
+
+
+```{r, self test exp-fun}
+curve(
+  exp_fun(x, 2.2, 1/15), add = FALSE, from = 0, to = 50,
+  ann = FALSE, axes = TRUE, ylab = "f(x)"); box()
+```
+
+
+```{r, simulated data on a line}
+# Seed the RNG so we can reproduce our results
+set.seed(1234567)
+
+# Specify the x-range and number of points:
+n_pts = 50
+x_min = 2
+x_max = 10
+
+# Generate the x-values
+x_sim = runif(n_pts, min = x_min, max = x_max)
+```
+
+
+```{r}
+param_intercept = 2.3
+param_slope = 0.67
+y_pred = param_intercept + x_sim * param_slope
+plot(x_sim, y_pred, main = "Simulated Data\nNo Errors", xlab = "", ylab = "")
+
+```
+
+```{r, Normal errors 1}
+error_mean = 0
+error_sd = 0.25
+
+y_observed = 
+  y_pred + 
+  rnorm(
+    n = n_pts, 
+    mean = error_mean, 
+    sd = error_sd)
+plot(x_sim, y_observed, main = "Normally Distributed Errors\n Constant Variance", xlab = "", ylab = "")
+```
+
+```{r, Normal errors 2}
+error_mean = 0
+error_sd = 0.1
+
+y_observed_2 = 
+  y_pred + 
+  rnorm(
+    n = n_pts, 
+    mean = error_mean, 
+    sd = error_sd * x_sim)
+
+par(mfrow = c(1, 2))
+plot(x_sim, y_observed, main = "Normally Distributed Errors\n Constant Variance", xlab = "", ylab = "")
+plot(x_sim, y_observed_2, main = "Normally Distributed Errors\n Increasing Variance", xlab = "", ylab = "")
+```
+
+```{r, exponentially-distributed errors}
+
+y_observed_3 = 
+  y_pred + 
+  rexp(
+    n = n_pts, 
+  rate=1.2)
+
+plot(x_sim, y_observed_3, main = "Exponentially Distributed Errors", xlab = "", ylab = "")
+
+
+```
+
+```{r}
+
+```
+

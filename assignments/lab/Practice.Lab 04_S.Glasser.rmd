@@ -1,0 +1,317 @@
+---
+title: "PracticeLab 04: Uncertainty and Error"
+author: "Sonja"
+date: "28/9/2021"
+output: html_document
+---
+
+I worked with JT and Bonnie Turek
+
+```{r setup, include=FALSE}
+require(palmerpenguins)
+
+```
+
+```{r, echo=FALSE}
+#plotting a PDF curve
+# Generate a vector of x-values
+x = seq(-3, 3, length.out = 1000)
+y = dnorm(x)
+
+plot(x, y, main = "Normal PDF", type = "l")
+abline(h = 0)
+```
+
+```{r, echo=FALSE}
+#hist(
+#penguins$body_mass_g,
+ # main = "Histogram of Penguin Body Mass",
+  #xlab = "Body Mass (g)")
+```
+
+```{r, echo=FALSE}
+mean(penguins$body_mass_g, na.rm = TRUE)
+sd(penguins$body_mass_g, na.rm = TRUE)
+nrow(penguins)
+```
+
+```{r}
+#Random Penguin Masses
+dat_1 = rnorm(n = 344, mean = 4202, sd = 802)
+dat_2 = rnorm(n = 344, mean = 4202, sd = 802)
+dat_3 = rnorm(n = 344, mean = 4202, sd = 802)
+dat_4 = rnorm(n = 344, mean = 4202, sd = 802)
+
+```
+
+
+
+```{r}
+#Simulated Body Mass Histograms
+
+par(mfrow = c(2, 2))
+
+hist(dat_1)
+hist(dat_2)
+hist(dat_3)
+hist(dat_4)
+```
+
+```{r}
+#Random Uniform Numbers
+set.seed(12)
+dat_unif = runif(n = 270, min = 0, max = 4)
+hist(dat_unif)
+```
+
+```{r}
+#set.seed() function. If we don’t explicitly set the random seed, the RNG generates its own seed when R starts up, using the current time.
+#if you use the same set.seed for each random number generator then you will get the same set of random numbers. 
+
+
+```
+
+
+
+```{r}
+#What’s a residual? A residual is the difference between a predicted value and the observed value.
+line_point_slope = function(x, x1, y1, slope)
+{
+  get_y_intercept = 
+    function(x1, y1, slope) 
+      return(-(x1 * slope) + y1)
+  
+  linear = 
+    function(x, yint, slope) 
+      return(yint + x * slope)
+  
+  return(linear(x, get_y_intercept(x1, y1, slope), slope))
+}
+
+set.seed(123)
+n = 17
+slope = 0.7
+intcp = 0.2
+
+guess_x = 6
+guess_y = 4
+guess_slope = 0.72
+
+x = runif(n = n, min = 1, max = 10)
+y = rnorm(n = n, mean = slope * x + intcp)
+
+plot(x, y, pch = 16)
+curve(line_point_slope(x, guess_x, guess_y, guess_slope), add = T)
+
+```
+
+
+```{r}
+n_pts = 10
+x_min = 1
+x_max = 10
+x = runif(n = n_pts, min = x_min, max = x_max)
+
+dat = data.frame(x = x, y_observed = rnorm(n_pts))
+
+plot(y_observed ~ x, data = dat, pch = 8)
+
+```
+```{r}
+#Use the line_point_slope() to estimate a linear model for the simulated points.
+n_pts = 10
+x_min = 1
+x_max = 10
+x = runif(n = n_pts, min = x_min, max = x_max)
+
+dat = data.frame(x = x, y_observed = rnorm(n_pts))
+
+plot(y_observed ~ x, data = dat, pch = 8)
+
+guess_x = 6
+guess_y = 0
+guess_slope = 0.1
+
+plot(y_observed ~ x, data = dat, pch = 8)
+curve(line_point_slope(x, guess_x, guess_y, guess_slope), add = T)
+```
+```{r}
+
+dx<-line_point_slope(dat$x, guess_x, guess_y, guess_slope)
+
+
+```
+
+```{r}
+### Merge datasets
+dat_all <- data.frame(dat, dx)
+names(dat_all)[names(dat_all) == "y"] <- "y_predicted"
+
+#better option
+dat$y_predicted=dx
+
+
+```
+
+```{r}
+#why do I have 100 points?
+dat$resids<-dat$y_predicted- dat$y_observed
+
+sum(dat$resids)
+
+plot(dat$y_observed~dat$resids)
+
+hist(dat$resids)
+
+```
+
+### Assignment
+
+#### Q1
+
+Code used to create vectors 
+
+
+```{r}
+
+mean=10.4
+sd=2.4
+
+norm_17 = rnorm(n = 17, mean = mean, sd = sd)
+norm_30 = rnorm(n = 30, mean = mean, sd = sd)
+norm_300 = rnorm(n = 300, mean = mean, sd = sd)
+norm_3000 = rnorm(n = 3000, mean = mean, sd = sd)
+
+```
+
+
+Q2 Histogram Code
+(2 pts.) Include the R code you used to create your figure. Your answer should include code that builds the figure as well as saves it to a file.
+Q3 Histogram Figure
+(4 pts.) Upload your lab_04_hist_01.png file to Moodle. Make sure you double check the image size and resolution requirements.
+```{r}
+
+require(here)
+
+png(
+  filename = here("assignments","lab","lab_04_hist_01.png"),
+  width = 1500, height = 1600, 
+  res = 180, units = "px")
+
+par(mfrow = c(2, 2))
+
+hist(norm_17, main="Histogram of 17 random #s")
+hist(norm_30, main="Histogram of 30 random #s")
+hist(norm_300, main="Histogram of 300 random #s")
+hist(norm_3000, main="Histogram of 3000 random #s")
+
+dev.off()
+
+```
+
+Q4 The graphs with 300 and 3000 random variables have seem to have a normal distribution with the randomly generated numbers having the highest density around the mean then having descending frequency towards the outer limits or more extreme values. Although the graphs with 17 and 30 randomly generated have the highest frequency around the mean, there is no clear bell shape. 
+
+Q5 The histograms illustrate the phenomenon that with a higher number of samples the closer to the normal distribution the points will lie on. This is due to the *central limit theorem* which states "the distribution of a sample variable approximates a normal distribution (i.e., a “bell curve”) as the sample size becomes larger, assuming that all samples are identical in size, and regardless of the population's actual distribution shape."
+
+Q6 The standard normal distribution parameters are the mean and the standard deviation. The mean is usually set to 0 and the standard deviation is usually 1, 2 or 3 which describes how much of the area under the curve is encompassed by the distance of the standard deviation from the mean. sd=1 encompasses 68% of the area under the bell curve, sd=2 encompasses 95% and sd=3 encompasses 99%
+
+
+Q7
+```{r}
+x = seq(3, 18, length.out = 1000)
+y = dnorm(x, mean = 10.4, sd = 2.4,)
+
+svg(
+  filename = 
+    here("images","norm_1.svg"),
+  width = 7, 
+  height = 5)
+
+plot(x, y, main = "Normal curve: mean=10.4, sd=2.4", type = "l", xlim = c(3, 18))
+abline(h = 0)
+
+dev.off()
+
+```
+
+Q8 upload into moodle
+
+Q9 We used the same data set for all four figures.
+Q10 image 
+```{r}
+set.seed(12345)
+n_pts = 100
+my_size = 10
+x=rbinom(n=n_pts, size=my_size, prob=0.7)
+datx = data.frame(x = x, y = rnorm(n_pts))
+
+
+
+png(
+  filename = here("images", "dist_play_SGlasser.png"),
+  width = 1500, height = 1600, 
+  res = 180, units = "px")
+
+par(mfrow = c(2, 2))
+
+hist(datx$y, main="histogram random normal #s, \ny variable", xlab = "y", col = "goldenrod3")
+
+hist(datx$x, main="histogram random binomial dist. #s, \nx variable", xlab = "x", col = "darkorchid")
+
+boxplot(datx, main="Boxplot of randomly generated \nx&y variables",   xlab = "x, random binomial #s",
+    ylab = "y, random normal #s",
+    col = "lightblue")
+
+plot(datx$x~datx$y, 
+      pch=16,
+     cex= 3,
+     col = adjustcolor("green", alpha.f = 0.2),
+     main="Scatterplot of randomly generated x & y variables",
+      xlab = "x, random binomial #s",
+    ylab = "y, random normal #s")
+
+dev.off()
+
+```
+Q11&Q12
+```{r}
+
+n_pts = 50
+x_min = 5
+x_max = 40
+x = runif(n = n_pts, min = x_min, max = x_max)
+datm = data.frame(x = x, y = rnorm(n_pts))
+
+guess_x = 23
+guess_y = 0
+guess_slope = -0.01
+
+png(
+  filename = here("images", "Q11.SGlasser.png"),
+  width = 1500, height = 1000, 
+  res = 180, units = "px")
+
+plot(y~ x, data = datm, pch = 9, col="darkgreen", main="random uniform and normal dist. scatter", xlab= "random uniform #s", ylab="random normal #s")
+curve(line_point_slope(x, guess_x, guess_y, guess_slope), add = T)
+
+dev.off()
+
+
+```
+Q13&Q14
+```{r}
+
+dd<-line_point_slope(datm$x, guess_x, guess_y, guess_slope)
+
+datm$y_predicted=dd
+
+datm$resids<-datm$y-datm$y_predicted
+
+sum(datm$resids)
+
+plot(datm$resids~datm$y_predicted, main="Relationship between observed y values and residuals", xlab="residuals", ylab="predicted y values")
+
+hist(datm$resids, main="histogram of residuals", xlab="residuals")
+
+```
+

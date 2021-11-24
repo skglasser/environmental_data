@@ -1,0 +1,240 @@
+---
+title: "Data Exploration and Deterministic Functions"
+author: "Sonja"
+date: "19/9/2021"
+output: html_document
+---
+
+## Learning objectives
+
+* Working with working directories
+* Importing data from the internet and local files
+* Data manipulation: merging data frames
+* Graphical and numerical data exploration
+* Installing R packages
+
+In this assignment we work on use the habitat data set, ‘hab.sta.csv’, from a collection of the six relational data sets each of which describe different ecological information about "Oregon Birds".  
+
+```{r setup, include=FALSE}
+
+#install.packages("here")
+require(here)
+
+#give direct location in another
+here("C:/Users/Zonj/Documents/Universites_Research/UMass/courses/ECO 602_634 environ stats/environmental_data")
+
+#save assignments in one place
+setwd("C:/Users/Zonj/Documents/Universites_Research/UMass/courses/ECO 602_634 environ stats/environmental_data/assignments")
+
+```
+
+```{r, echo=FALSE}
+#use file.exists to see the the data set even exists in the folder you are directing it to. Provide a TRUE or FALSE. 
+#file.exists(here("data", "data_sets", "my_data.csv"))
+
+#here() directs you exatly to the where 
+data<-read.csv(here("data", "hab.sta.csv"))
+
+```
+
+
+## Q1
+
+
+### Histograms of each terrain variable
+
+```{r, echo=FALSE, fig.height=3, fig.width=15}
+
+par(mfrow = c(1, 3))
+    
+hist(data$elev,
+     main = paste("Histogram of of sampling site elevation"), 
+     xlab="elevation")
+
+
+hist(data$slope, 
+     main = paste("Histogram of of sampling site slope"),
+     xlab="slope")
+
+
+hist(data$aspect, 
+     main = paste("Histogram of of sampling site aspect"), 
+     xlab="aspect", 
+     breaks=30)
+
+
+```
+
+
+
+## Q2
+
+
+The shape of the elevation histogram seems to be bell shaped with higher frequency of sampling sites to the center left of the plot (i.e. "right skew"). This indicates that there are more low to mid elevation sampling sights. It appears that the sampling distribution is biased towards sites at the 300-400 m range.  
+
+
+
+## Q3
+
+
+The units of the slope are *percent slope (%)*
+
+
+
+## Q4 
+
+
+The distributions of the slope data are also similarly bell shaped, like in the elevation data. The histogram plot shows that most of the slopes at the sampled sites center around 50% and few sites have shallower or extremely steep slopes. There is a higher representation of shallow slopes in comparison to the steep slopes, but, most slopes are represented in the 40-70% range. 
+
+
+
+## Q5 
+
+Aspect is a measurement that describes which direction a the sampled sites' slope faces in relation to a full circle. Where, 0° would indicate that the slope faces due north and 360° would bring the slope face back to due north again. 
+
+
+
+## Q6
+
+The frequency of the aspects of the sampled sites seems to be more or less evenly distributed. There are some peaks at certain points for instance, North (~0-20°), Southeast (~120-130°), Southwest (~230°), and West (~280-290°). But overall it seems that there is a good representation of the all points around the 360° aspect of the sampling sites within the area study. 
+
+```{r, function for plotting a line, echo=FALSE}
+# Line point function used to plot "fitted" line on scatterplots: Line point slope function for plotting visually estimated slopes onto scatter plot graphs of the 3 terrain variables plotted in the histograms above in relation to the basal area of trees, live and dead (m2 per ha). 
+line_point_slope = function(x, x1, y1, slope)
+{
+  get_y_intercept = 
+    function(x1, y1, slope) 
+      return(-(x1 * slope) + y1)
+  
+  linear = 
+    function(x, yint, slope) 
+      return(yint + x * slope)
+  
+  return(linear(x, get_y_intercept(x1, y1, slope), slope))
+}
+
+```
+
+
+### Estimating the slope "visually" for each scatterplot 
+
+
+I used the code from the week 2 in class assignment in order to find the point in the center of the data and then calculated the slope by simply dividing the data_center_x/data_center_y. 
+
+I did this for each terrain variable in relation to the basal total area of trees.
+
+I then assigned the calcuted slope in the slope argument for the 'line_point_slope()' for each of the visually estimated linear functions. 
+
+This is not the correct way to fit a line to a set of data points, but I understand the value in figuring out how to manually fit a line. 
+
+
+
+### Panel of Histograms and Scatterplots with visually estimated linear function
+
+
+```{r, data center to estimate slope, elevation, echo=FALSE}
+data_center_x = mean(data$elev)
+data_center_y = mean(data$ba.tot)
+#c(data_center_x, data_center_y)
+```
+
+```{r, echo=FALSE}
+data_center_x.a = mean(data$aspect)
+data_center_y.a = mean(data$ba.tot)
+#c(data_center_x.a, data_center_y.a) 
+#slope= .12
+```
+
+```{r, echo=FALSE}
+data_center_x.s = mean(data$slope)
+data_center_y.s = mean(data$ba.tot)
+#c(data_center_x.s, data_center_y.s) 
+#slope= .45
+```
+
+
+
+## Q7
+
+```{r, echo=FALSE, fig.height=7, fig.width=15}
+
+par(mfrow = c(2, 3))
+    
+hist(data$elev,
+     main = paste("Histogram of of sampling site elevation"), 
+     xlab="elevation")
+
+
+hist(data$slope, 
+     main = paste("Histogram of of sampling site slope"),
+     xlab="slope")
+
+
+hist(data$aspect, 
+     main = paste("Histogram of of sampling site aspect"), 
+     xlab="aspect", 
+     breaks=30)
+plot(
+  x = data$elev,
+  y = data$ba.tot,
+  main = "Elevation and Basal area",
+  col = "goldenrod1",
+  cex = 0.8,
+  xlab = "elevation",
+  ylab = "total basal area")
+curve(
+  line_point_slope(
+    x, 
+    data_center_x, 
+    data_center_y,
+    0.056), 
+  add = TRUE, col = "darkorchid3", lwd=2)
+
+plot(
+  x = data$slope,
+  y = data$ba.tot,
+  main = "Slope and Basal area",
+  col = "light blue",
+  cex = 0.8,
+  xlab = "slope",
+  ylab = "total basal area")
+curve(
+  line_point_slope(
+    x, 
+    data_center_x.s, 
+    data_center_y.s,
+    0.45), 
+  add = TRUE, col = "darkorange2",lwd=2)
+
+plot(
+  x = data$aspect,
+  y = data$ba.tot,
+  main = "Aspect and Basal area",
+  col = "light green",
+  cex = 0.8,
+  xlab = "aspect",
+  ylab = "total basal area")
+curve(
+  line_point_slope(
+    x, 
+    data_center_x.a, 
+    data_center_y.a,
+    0.12), 
+  add = TRUE, col="deeppink2", lwd=2)
+```
+
+
+## Q8
+
+The relationship between the elevation and the total basal area of trees seems to be highest in low to mid level elevations. The highest total basal area values seem to be clustered around the same elevation points we saw most sampled, 300-400 m range. The relationship between elevation and total basal area is not linear, and a linear model would not be a good fit because at very low and high elevations the total basal area of the trees is much smaller, the fit should fit the slightly bell shaped distribution of this data. 
+
+The relationship between the slope and the total basal area of trees has an unclear association. The highest total basal area values seem to be more or less evenly distributed along all measured slopes, which indicated that linear model is definitely not the correct fit. Although, on the more extreme ends the slope measurements, i.e. most shallow and most steep slopes, there looks to be clusters of smaller total basal areas, but overall I do not think slope matters or is very important to determining the total basal area of a tree. 
+
+The relationship between the slope and the total basal area has the weakest association of all of the terrain variables. Total basal area values seem to be more or less evenly distributed along all reported aspects, which indicated that a linear model could fit the model well, but it would be a flat line with no slope at all. I do not think aspect of slope is important to determining the total basal area of a tree. 
+
+
+
+
+
+
+

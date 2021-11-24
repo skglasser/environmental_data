@@ -1,0 +1,75 @@
+---
+title: "in class prob calc"
+author: "Sonja"
+date: "14/10/2021"
+output: html_document
+---
+
+In-Class Probability Calculations and Confidence Intervals
+
+Objectives
+Practice calculating probabilities using R’s distribution functions.
+
+R has built-in functions for calculating the probabilities of events for many parametric distributions.
+
+The d-functions (dbinom, dnorm, dpois, etc.) calculate the probability density (or mass) of a single event. For a discrete distribution like the binomial, the probability mass of an event is the probability that the event happens.
+
+Each of the d-functions has different arguments, depending on the specific parameters of the distribution in question.
+
+For example, recall the Poisson distribution, which has 1 parameter: lambda.
+
+Using dpois I can ask what is the probability that I observe a count of exactly 7 if I have a poisson-distributed population with lambda = 10.4:
+
+```{r}
+dpois(x = 7, lambda = 10.4)
+
+```
+Recall the binomial distributions, and their two parameters:
+
+n: the number of trials. R calls this size.
+p: the probability of success on each trial. R calls this prob.
+For example, if I had a set of six forest plots, and I knew from earlier observations that when I do a survey, I observe birds in about 2/3 of the plots (i observe 4 presences out of 6 sites), I could use a binomial distribution to model my set of plots.
+
+Q1= n=6, prob=2/3
+
+Q2
+```{r}
+#Q2
+dbinom(x=4,6,2/3)
+#Q3
+dbinom(x=0,6,2/3)
+
+```
+
+Cumulative probability: The p-functions
+The d-functions calculate the probability density or mass of observing a specific event.
+
+I can use the p-functions to calculate the probabilities of observing a range of events.
+
+For example, I can use ppois to ask what is the probability that I observe a count of 7 or fewer if I have a poisson-distributed population with lambda = 10.4:
+
+```{r}
+ppois(q = 7, lambda = 10.4)
+```
+Law of Total Probability and Complementary Events
+I can also use it to ask what the probability of observing a count greater than 7 using the law of total probability:
+
+
+```{r}
+1 - ppois(q = 7, lambda = 10.4)
+```
+
+
+How could I change the code to calculate the probability of observing seven or greater? use the compliment of 1- 6 or fewer to see prob of 7 or greater. 
+
+```{r}
+1 - ppois(q = 6, lambda = 10.4)
+```
+
+```{r}
+pbinom(4,6,2/3)
+```
+```{r}
+1-pbinom(3,6,2/3)
+```
+

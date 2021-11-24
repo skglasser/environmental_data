@@ -1,0 +1,142 @@
+---
+title: "Lab 02: R Fundamentals 2"
+author: "Sonja Glasser"
+date: "15/9/2021"
+output: html_document
+---
+
+Worked together with Abigail Guinan, Ethan Rutledge, JT Larkin
+
+### Intermediate Logical Subsetting II: Qs 1-2
+
+```{r}
+n = 12345
+vec_1 = sample(12, n, replace = TRUE)
+head(vec_1)
+
+vec_2 <- vec_1 == 3
+#vec_1[vec_2]
+
+```
+
+
+#### Q1 
+vec_2 <- vec_1 == 3
+
+#### Q2
+A visual inspection would be a bad idea because it would be very time consuming and likely that human error will effect the result
+
+### Intermediate Logical Subsetting II: Qs 3-5
+
+```{r}
+length(vec_1)
+
+sum(vec_1 == 3)
+
+n = 10
+vec_1 = sample(12, n, replace = TRUE)
+paste0("Sum of elements with value 3: ", sum(vec_1 == 3))
+
+```
+#### Q3 
+The count was different each time becuase the sample() argument sampled 10 numbers at random in the entire vector. Each time the sampling function is executed a new set of numbers are sampled. The likelihood that the number '3' within a random sample of 10 numbers from a vector with integers 1:12 and a length of >12,000 numbers, would definitely be variable. 
+
+#### Q4
+A logical test is the safest way to select entries with a value of 3 becuase it provides a good random sampling of the whole spread of the data. 
+
+#### Q5
+Logical subsetting by hand is a bad practice because it can result in biased results and likely to have an error.
+
+
+### Basic Loops: Q6
+```{r}
+for (i in 1:10)
+{
+  print(paste0("This is loop iteration:",i))
+}
+
+```
+
+#### Q6 
+Code for modified loop. 
+for (i in 1:10)
+{
+  print(paste0("This is loop iteration:",i))
+}
+
+### Intermediate Loops: Q7 
+
+```{r}
+
+n=6
+
+for (i in 1:n)
+{
+  print(i)
+}
+
+
+```
+
+#### Q7
+n=6
+
+for (i in 1:n)
+{
+  print(i)
+}
+
+### Intermediate Loops 2: Q8
+
+```{r}
+
+n=17
+
+vec_1 = sample(10, n, replace = TRUE)
+vec_1
+
+#this is the correct code
+for (i in 1:n)
+{
+  print(paste0("The element of vec_1 at index ", i, " is : ", vec_1[i]))
+}
+
+```
+
+#### Q8 
+
+for (i in 1:n)
+{
+  print(paste0("The element of vec_1 at index ", i, " is : ", vec_1[i]))
+}
+
+### Functions Q9
+
+```{r}
+
+create_and_print_vec = function(n, min = 1 , max = 10)
+  { 
+  vec_1 = sample(min:max, n, replace = TRUE)
+  
+  for (i in 1:n)
+      { 
+    print(
+      paste0("The element at index ", i, " is : ", vec_1[i]))
+      }
+}
+
+create_and_print_vec(10, min = 100, max = 200)
+
+```
+
+#### Q9 
+create_and_print_vec = function(n, min = 1 , max = 10)
+  { 
+  vec_1 = sample(min:max, n, replace = TRUE)
+  
+  for (i in 1:n)
+      { 
+    print(
+      paste0("The element at index ", i, " is : ", vec_1[i]))
+      }
+}

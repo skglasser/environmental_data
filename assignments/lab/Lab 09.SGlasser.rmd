@@ -1,0 +1,145 @@
+---
+title: 'Lab 9: Modeling Data 2'
+author: "Sonja"
+date: "10/11/2021"
+output: html_document
+---
+
+
+### Objectives
+
+Practice implementing various 1-and 2-sample tests with real data.
+
+#### Q1 
+
+The null hypothesis of the Chi-square test is that the observed presence/abundance of the Brown Creeper does not differ from what we would expect if presence/absence was not related to edge/interior habitats.
+
+```{r, echo=FALSE,results='hide'}
+require(here)
+birds   = read.csv(here("data", "bird.sta.csv"))
+hab     = read.csv(here("data", "hab.sta.csv"))
+birdhab = merge(birds, hab, by=c("basin", "sub", "sta"))
+
+# Create a contingency table for edge/interior and brown creeper presence/absence
+table(birdhab$s.edge, birdhab$BRCR > 0)
+
+# set the presence to be in the first column
+br_creeper_table = table(birdhab$s.edge, birdhab$BRCR > 0)[, 2:1]
+```
+
+
+```{r}
+chisq.test(br_creeper_table)
+```
+
+
+#### Q2
+
+Based on the low p value (1.386e-06) we would reject the null hypothesis and state that Brown creepers show significantly different values of observed than the expected. There appears to be a preference of habitat for the Brown Creepers. 
+
+
+#### Q3 
+
+```{r, echo=FALSE}
+require(palmerpenguins)
+```
+
+
+```{r}
+fit_species = 
+  lm(
+    formula = body_mass_g~ species,
+    data = penguins)
+```
+
+
+#### Q4
+
+```{r}
+fit_sex = 
+  lm(
+    formula = body_mass_g ~ sex,
+    data = penguins)
+```
+
+
+#### Q5
+
+```{r}
+fit_both = 
+  lm(
+    formula = body_mass_g~ sex*species,
+    data = penguins)
+```
+
+
+#### Q6
+
+```{r, echo=FALSE}
+boxplot(body_mass_g~species,
+    data = penguins, main="Penguin Body Mass ~ Species", ylab=" body mass (g)", xlab = " ",  las=3)
+```
+
+
+#### Q7 
+
+```{r, echo=FALSE}
+boxplot(body_mass_g~sex,
+    data = penguins, main="Penguin Body Mass ~ Sex", ylab=" body mass (g)", xlab = " ",  las=3)
+```
+
+
+#### Q8
+
+```{r, echo=FALSE}
+boxplot(body_mass_g~ sex*species,
+    data = penguins, main="Penguin Body Mass ~ Species & Sex", ylab=" body mass (g)", xlab = " ", names=c("female\nAdelie", "male\nAdelie", "female\nChinstrap", "male\nChinstrap", "female\nGentoo", "male\nGentoo"), las=3)
+```
+
+#### Q9 
+By visually assessing the spread of the data points for the boxplots above, the variation of body mass associated to each category and combination of categories looks pretty homogeneous. Potentially, the boxplot that looks at how penguin species effects body mass might have slightly heterogeneous variation between factors. In this graph Gentoo penguins seems to have slightly more variation than the other two species especially Chinstrap. 
+
+
+#### Q10 
+
+
+The null hypothesis for the Bartlett test is that there is no difference in variance between groups.
+
+
+#### Q11
+
+p value=0.0501 for the Bartlett test of homogeneity for observations grouped by species. 
+
+```{r}
+bartlett.test(body_mass_g~species, data=penguins)
+```
+
+
+#### Q12
+
+p-value = 0.0319 from the Bartlett test of homogeneity for observations grouped by sex. 
+
+```{r}
+bartlett.test(body_mass_g~sex, data=penguins)
+
+```
+
+
+#### Q13
+
+p-value=0.1741 from the Bartlett test of homogeneity for observations grouped by both factors
+
+```{r}
+dat_groups = aggregate(
+  body_mass_g ~ species*sex,
+  data = penguins,
+  FUN = c)
+
+bartlett.test(dat_groups$body_mass_g, list(dat_groups$species, dat_groups$sex), data=penguins)
+
+```
+
+#### Q14 
+
+The Bartlett test for the effect of species (p value = 0.0319) on penguin mass has issues with heterogeneity of the variance, although marginally. Here we can reject the null hypothesis of the Bartlett test which means that we cannot assume homogeneity of the variance. On the other hand, the p value = 0.0501 of the Bartlett test of the effect of sex on the body mass is only marginally non significant, but there still may be some issues with assuming homogeneity. Whereas the model with combined both factors, sex and species, seems to have more homogeneous variation of the data between groups (p value = 0.1741). By using the combined influence of species and sex on body mass, the variation is more homogeneous between groups and therefore the model fit is likely to be better.
+

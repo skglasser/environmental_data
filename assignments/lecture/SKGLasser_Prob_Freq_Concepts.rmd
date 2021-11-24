@@ -1,0 +1,132 @@
+---
+title: "Probability and Frequentist Concepts"
+author: "Sonja"
+date: "23/10/2021"
+output: html_document
+---
+
+### Learning Objectives
+
+- Use the distribution functions in R.
+
+- Sampling distribution insight
+
+#### Binomial Probabiltiy Mass Function
+
+##### Q1: 
+
+What is the probability of observing a count of exactly 3 successes in a binomial distribution with parameters n = 4 and p = 0.75?
+
+```{r}
+
+dbinom(3, 4, .75)
+
+```
+##### Q2: 
+
+What is the probability of observing a count of 3 successes or fewer in a binomial distribution with parameters n = 4 and p = 0.75?
+
+```{r}
+pbinom(3, 4, .75)
+```
+##### Q3: 
+
+What is the probability of observing more than 3 successes in a binomial distribution with parameters n = 5 and p = 0.75?
+
+```{r}
+1-pbinom(3, 5, .75)
+```
+#### Normal Distribution - Probability Density Function
+
+##### Q4:
+
+What is the probability of observing a value of less than 1.2 from a normally-distributed population with mean = 2 and standard deviation = 2?
+
+
+```{r}
+pnorm(1.2, mean = 2, sd = 2)
+
+```
+
+##### Q5: 
+
+What is the probability of observing a value of greater than 1.2 from a normally-distributed population with mean = 2 and standard deviation = 2?
+
+```{r}
+1-pnorm(1.2, mean = 2, sd = 2)
+```
+
+##### Q6:
+
+What is the probability of observing a value between 1.2 and 3.2 from a normally-distributed population with mean = 2 and standard deviation = 2?
+
+```{r}
+
+pnorm(3.2, mean = 2, sd = 2)-pnorm(1.2, mean = 2, sd = 2)
+
+```
+#### Central Limit Theorem
+
+
+##### Q7: 
+
+Describe how the shape of the histogram changes as you continue to press the sample button.
+
+I chose the $\alpha$ = 1.42 and the $\beta$ = 5.00 for a right skewed $\beta$ distribution. 
+
+The sample size was set to 1 and the number of draws to 50. 
+With more sampling the historgram bars take the shape of the theoretical distribution curve with the defined parameters. Meaning that the histogram takes a right skewed shape. After a while there appears to be a pattern of raising then lowering the raising again of the height of the maximum point of the histograms, but this change is very slight and eventually the shape becomes more stabilized. 
+
+
+##### Q8:
+
+Describe how the shape of the histogram changes as you continue to press the sample button.
+
+I kept the same the $\alpha$ = 1.42 and the $\beta$ = 5.00, as in Q7. 
+
+With a sample size of 2 and 50 draws the bulk of the of the historgram is still shifted to the left (right skewed) as in the example above but the shape is more narrow and looks almost more similar to that of a normal curve as opposed to a rigth skewed curve. Each time I sample the historgram fills more under the theoretical curve. 
+
+
+##### Q9-Q11: 
+
+Set the sample size to 15 and the draws to 50. 
+
+##### Q9: 
+
+Describe how the shape of the histogram changes as you continue to press the sample button.
+
+The histogram does not change shape as drastically as in the previously examples, it seems that the sample distribution is much more narrow than before. But, as in the previous example, the historgram takes the shape of a more normal distribution although slightly right skewed curve, just in a much more narrow range. 
+
+##### Q10:
+
+Why is there such a drastic change in the shape of the sampling distribution when you change the sample size from 1 to 2?
+
+As stated by the Central Limit Theorem, as the sample size increases the sample distribution gets closer and closer to the shape of a normal distribution regardless of the distribution of the population. 
+
+##### Q11:
+
+What are the two main factors that determine the width of the sampling distribution of the mean?
+
+The sample size and the value of $\beta$ determine the width of the sampling distribution of the mean.
+
+
+##### Q12: 
+
+How many 3-character words are possible?
+
+$\ 25^3$ = 15625
+
+
+##### Q13: 
+
+How many books would the Library contain if you added one additional position to the book size? Express your answer in terms of B.
+
+original 
+
+ $\ B = 25^{1,312,000}$
+ 
+one more position would be: 
+ 
+  $\ B \ x\ 25^1 $ 
+  
+  

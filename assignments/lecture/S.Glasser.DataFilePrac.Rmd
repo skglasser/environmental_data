@@ -1,0 +1,40 @@
+---
+title: "Untitled"
+author: "Sonja"
+date: "21/9/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+require(here)
+
+#give direct location in another
+here("C:/Users/Zonj/Documents/Universites_Research/UMass/courses/ECO 602_634 environ stats/environmental_data")
+
+```
+
+```{r}
+#here() directs you exatly to the where 
+dat_rope<-read.csv(here("data", "rope.csv"))
+dat_catrate<-read.csv(here("data", "catrate.csv"))             
+dat_delomys<-read.csv(here("data"  , "delomys.csv"))                   
+```
+
+```{r}
+head(dat_rope)
+head(dat_catrate)
+head(dat_delomys)
+```
+
+```{r}
+plot(
+  x = dat_rope$ch1,
+  y = dat_rope$ch2,
+  main = "Relationship of ch1 to ch2 of data_rope\n By Sonja Glasser",
+  col = "pink",
+  pch=16,
+  cex = 1,
+  xlab = "ch1",
+  ylab = "ch2")
+```
+

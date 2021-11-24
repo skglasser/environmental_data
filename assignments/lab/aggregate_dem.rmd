@@ -1,0 +1,31 @@
+---
+title: "aggregate demo"
+author: "Sonja"
+date: "27/10/2021"
+output: html_document
+---
+
+
+```{r}
+
+require(palmerpenguins)
+
+#clumsy code
+aggregate(penguins$flipper_length_mm,
+          list(penguins$species), 
+          FUN= mean, na.rm=TRUE)
+
+#better code
+aggregate(flipper_length_mm ~ species+sex,
+          data=penguins, 
+          FUN= mean, 
+          na.rm=TRUE)
+
+```
+
+
+```{r}
+boxplot(flipper_length_mm ~ species+sex,
+          data=penguins)
+```
+

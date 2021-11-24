@@ -1,0 +1,29 @@
+---
+title: "Data Exploration 2 not 1"
+author: "Sonja"
+date: "23/9/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+require(here)
+require(psych)
+```
+
+```{r}
+#Load data frames 
+data_bird<-read.csv(here("data", "bird.sta.csv"))
+data_habitat<-read.csv(here("data", "hab.sta.csv"))
+head(data_bird)
+```
+
+```{r}
+pairs.panels(data_habitat[,c("elev","ba.con","slope")])
+```
+Band-tailed Pigeon=BTPI
+```{r}
+hist(data_bird$STJA,
+     main = paste("Histogram Starling Jays Abundance"), 
+     xlab="Number of birds counted", breaks=(0:7-0.5))
+```
+

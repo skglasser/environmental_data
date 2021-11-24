@@ -1,0 +1,26 @@
+---
+title: "R Markdown Documents - Part 1"
+subtitle: "Analysis of Environmental Data"
+author: "Sonja Glasser"
+date: "5/9/2021"
+output: 
+ html_document:
+    toc: TRUE
+    toc_float: TRUE
+---
+
+#### Introduction
+
+I am **Sonja Glasser** I am a first year PhD student in the *Organismic Evolutionary Biology* program. 
+
+#### Concepts List
+
+1. Data exploration basics
+2. How to fit a model and how to select between alternative models.
+3. Introduction to Bayesian statistics
+
+#### Course List
+
+* Writing in the Sciences
+* The Bee Course
+* Insect Ecology

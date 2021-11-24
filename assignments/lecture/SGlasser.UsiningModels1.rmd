@@ -1,0 +1,200 @@
+---
+title: "Using Models 1"
+author: "Sonja"
+date: "3/11/2021"
+output: html_document
+---
+
+## Learning Objectives
+
+Conduct commonly used tests on categorical data
+
+
+### Key Concepts
+
+- Analysis of categorical data: 1- and 2-sample tests
+
+- Testing assumptions: normality
+
+- Interpreting test output
+
+```{r, echo=FALSE}
+require(here)
+catrate = read.csv(here("data", "catrate.csv"))
+
+```
+
+### Numerical and Graphical exploration
+
+##### Q1
+
+The values of the cat.rate collumn does not appear to be normally distributed. 
+
+```{r}
+hist(catrate$cat.rate, main = "Histogram of Catastophe Rates", xlab="Catastophe Rate")
+```
+
+
+### Check for Normality
+
+##### Q2
+
+p-value = 0.04097
+
+```{r}
+shapiro.test(catrate$cat.rate)
+```
+##### Q3 
+
+The null hypothesis for the shapiro test is that the data were sampled from a normally-distributed population. 
+
+
+##### Q4 
+
+Based on the Shapiro test there is strong evidence that the sample came from a non-normally distributed population. 
+
+
+### One-Sample Tests: Tests for Difference From Expectation
+
+#### Parametric One-Sample Test: The t-test
+
+##### Q5
+
+```{r}
+
+t.test(catrate$cat.rate,
+       alternative = c("two.sided"),
+       mu = 0.2857143,
+       conf.level = 0.95)
+
+```
+
+
+##### Q6 
+
+The null hypothesis is that the true mean is equal to 0.2857143. 
+
+##### Q7 
+
+This is a two-tailed test. 
+
+##### Q8
+
+If we were to go out and sample for the catastrophic rate of salamander eggs and we happened to observed many dry ponds and therefore a recorded a high catastrophic rate, it is possible that we what we observed is not true for the entire system and that in actuality the catastrophic rate is smaller. 
+
+##### Q9 
+
+The confidence interval for the difference between the null hypothesis and alternative hypothesis means is 0.3526250 - 0.7261295 and it does not include 0. 
+
+##### Q10 
+
+Based on the results from the t-test there is strong evidence to reject the null hypothesis. The p-value is 0.0119 meaning that it is very unlikely to observe the catastrophic rate we observed if the mean of the catastrophic rate was actually 0.28
+
+
+#### One-sided Alternative Hypothesis
+
+
+##### "greater"
+
+
+```{r}
+t.test(catrate$cat.rate, y = NULL,
+       alternative = "greater",
+       mu = 0.2857143,
+       conf.level = 0.95)
+```
+##### "less"
+
+```{r}
+t.test(catrate$cat.rate, y = NULL,
+       alternative = "less",
+       mu = 0.2857143,
+       conf.level = 0.95)
+```
+
+It shows that it is very unlikely that the carastrophic rate would be less than .28. 
+
+### Non-Parametric One-Sample Test: The Wilcoxon Rank Sum Test
+
+##### Q11
+
+```{r}
+wilcox.test(catrate$cat.rate, 
+            mu = 2 / 7)
+
+```
+##### Q12
+
+The p value from the Wilcox test is 0.0063, which is lower that the t-test's p value 
+
+
+##### Q13
+
+Yes there is strong evidence to reject the null hypothesis because the low p-value of 0.0063 from the Wilcox test means that the true mean is not equal to 2/7.
+
+
+##### Q14 
+
+The Wilcox test and the one-sample t tests show that it is very unlikely that the mean of the catastrophic reproduction rate is 2/7. The sample mean is actually 0.5393 which suggests the the catastrophic rate is not closely related to the rate of lake filling. 
+
+##### Q15 
+
+The Wilcox test is definitely better for this data set because of the clear violations of the normality assumption that is required for a t-test. 
+
+##### Q16 
+
+
+### Comparing two sample means
+
+
+```{r, echo=FALSE}
+require(palmerpenguins)
+penguin_dat = droplevels(subset(penguins, species != "Gentoo"))
+```
+##### Q16
+
+
+```{r}
+# Extract the Adelie penguin data
+dat_adelie = subset(penguin_dat, species == "Adelie")
+# Extract the Chinstrap penguin data
+dat_chin = subset(penguin_dat, species == "Chinstrap")
+```
+
+```{r}
+
+sh<-aggregate(flipper_length_mm ~ species,
+          data=penguin_dat, 
+          FUN=function(x) shapiro.test(x)$p.value)
+
+sh
+
+```
+
+##### Q17 
+
+For Adelie penguins the Shapiro test p value was 0.72 and for the Chinstrap was p value 0.81 meaning that the null hypothesis cannot be rejected and that the data for both groups is normally distributed.
+
+
+##### Q18 
+
+```{r, echo=FALSE}
+par(mfrow = c(1, 2))
+
+hist(dat_adelie$flipper_length_mm, main="Adelie penguin\n flipper length", xlab = "Flipper length (mm)", col = "goldenrod3")
+
+hist(dat_chin$flipper_length_mm, main="Chinstrap penguin\n flipper length", xlab = "Flipper length (mm)", col = "darkorchid3")
+```
+##### Q19
+
+The alternative hypothesis is that the mean flipper length of Adelie penguins and Chinstrap penguins is different. 
+
+##### Q20 
+
+```{r}
+
+t.test(flipper_length_mm~species, data=penguin_dat,
+       alternative = "two.sided")
+
+```
+

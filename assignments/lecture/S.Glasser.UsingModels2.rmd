@@ -1,0 +1,22 @@
+---
+title: "Using Models 2"
+author: "Sonja"
+date: "18/11/2021"
+output: html_document
+---
+
+## Using Models 2
+
+#### Learning Objectives
+
+Review 1- and 2-sample t-tests
+Perform a 1-way Analysis of Variance (ANOVA)
+Perform a simple- and multiple- linear regressions
+Interpret model coefficient tables
+Interpret ANOVA table
+
+```{r setup, include=FALSE}
+require(palmerpenguins)
+```
+
+

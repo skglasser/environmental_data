@@ -1,0 +1,37 @@
+---
+title: "code chunkn demo"
+author: "Sonja"
+date: "20/10/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+eval=TRUE evaluate code
+eval=FALSE do not evaluate the code
+```{r load_penguin_data, echo=TRUE, eval=TRUE}
+require(palmerpenguins)
+head(penguins)
+
+```
+
+```{r, simple pairplot}
+
+plot(penguins[,3:5])
+
+```
+
+fig.asp >1 = taller , <1 = wider 
+
+```{r, simple pairplot, fig.width=4, fig.asp=1}
+
+plot(penguins[,3:5])
+
+```
+
+```{r}
+
+```
+

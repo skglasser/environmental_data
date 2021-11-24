@@ -1,0 +1,260 @@
+---
+title: "Lab 04: Uncertainty and Error"
+author: "Sonja"
+date: "28/9/2021"
+output: html_document
+---
+
+### Learning objectives, technical skills and concepts:
+
+
+- Random number generation
+- Defining and quantifying error
+- Intro to optimization
+
+I worked with JT and Bonnie Turek
+
+
+
+#### Q1
+
+
+Code used to create vectors of normally-distributed random numbers 
+
+
+```{r}
+
+mean=10.4
+sd=2.4
+
+norm_17 = rnorm(n = 17, mean = mean, sd = sd)
+norm_30 = rnorm(n = 30, mean = mean, sd = sd)
+norm_300 = rnorm(n = 300, mean = mean, sd = sd)
+norm_3000 = rnorm(n = 3000, mean = mean, sd = sd)
+
+```
+
+
+#### Q2 
+
+Histogram code used to create figure.
+
+```{r, echo=FALSE}
+require(here)
+```
+
+```{r}
+
+png(
+  filename = here("assignments","lab","lab_04_hist_01.png"),
+  width = 1500, height = 1600, 
+  res = 180, units = "px")
+
+par(mfrow = c(2, 2))
+
+hist(norm_17, main="Histogram of 17 random #s")
+hist(norm_30, main="Histogram of 30 random #s")
+hist(norm_300, main="Histogram of 300 random #s")
+hist(norm_3000, main="Histogram of 3000 random #s")
+
+dev.off()
+
+```
+
+
+
+#### Q3 
+
+Histogram figure file "lab_04_hist_01.png" uploaded to Moodle.
+
+
+
+#### Q4 
+
+The graphs with 300 and 3000 random variables have seem to have a normal distribution with the randomly generated numbers having the highest density around the mean then having descending frequency towards the outer limits or more extreme values. Although the graphs with 17 and 30 randomly generated have the highest frequency around the mean, there is no clear bell shape. 
+
+
+
+#### Q5
+
+The histograms illustrate the phenomenon that with a higher number of samples the closer to the normal distribution the points will lie on. This is due to the *central limit theorem* which states "the distribution of a sample variable approximates a normal distribution (i.e., a “bell curve”) as the sample size becomes larger, assuming that all samples are identical in size, and regardless of the population's actual distribution shape."
+
+
+
+#### Q6 
+
+The standard normal distribution parameters are the mean and the standard deviation. The mean is usually set to 0 and the standard deviation is usually 1. The number of standard deviation from the center describes how much of the area under the curve is encompassed. For instance, sd=1 encompasses 68% of the area under the bell curve, sd=2 encompasses 95% and sd=3 encompasses 99%. 
+
+
+#### Q7
+
+Density Figure Code
+
+
+```{r}
+x = seq(3, 18, length.out = 1000)
+y = dnorm(x, mean = 10.4, sd = 2.4,)
+
+svg(
+  filename = 
+    here("images","norm_1.svg"),
+  width = 7, 
+  height = 5)
+
+plot(x, y, main = "Normal curve: mean=10.4, sd=2.4", type = "l", xlim = c(3, 18))
+abline(h = 0)
+
+dev.off()
+
+```
+
+
+
+#### Q8 
+
+Figure "norm_1.svg" uploaded into Moodle
+
+
+#### Q9 
+
+We used the same data set for all four figures.
+
+```{r}
+set.seed(12345)
+n_pts = 100
+my_size = 10
+x=rbinom(n=n_pts, size=my_size, prob=0.7)
+datx = data.frame(x = x, y = rnorm(n_pts))
+```
+
+
+#### Q10 
+
+Random Data Image File
+
+Figure file "dist_play_SGlasser.png" uploaded into Moodle. 
+
+```{r}
+
+png(
+  filename = here("images", "dist_play_SGlasser.png"),
+  width = 1500, height = 1600, 
+  res = 180, units = "px")
+
+par(mfrow = c(2, 2))
+
+hist(datx$y, main="histogram random normal #s, \ny variable", xlab = "y", col = "goldenrod3")
+
+hist(datx$x, main="histogram random binomial dist. #s, \nx variable", xlab = "x", col = "darkorchid")
+
+boxplot(datx, main="Boxplot of randomly generated \nx&y variables",   xlab = "x, random binomial #s",
+    ylab = "y, random normal #s",
+    col = "lightblue")
+
+plot(datx$x~datx$y, 
+      pch=16,
+     cex= 3,
+     col = adjustcolor("green", alpha.f = 0.2),
+     main="Scatterplot of randomly generated x & y variables",
+      xlab = "x, random binomial #s",
+    ylab = "y, random normal #s")
+
+dev.off()
+```
+
+
+
+
+#### Q11
+
+Random Data Model Fit
+
+```{r}
+
+n_pts = 50
+x_min = 5
+x_max = 40
+x = runif(n = n_pts, min = x_min, max = x_max)
+datm = data.frame(x = x, y = rnorm(n_pts))
+
+guess_x = 23
+guess_y = 0
+guess_slope = -0.01
+
+
+```
+
+
+#### Q12
+
+Random Data Model Fit Image File
+
+Figure file "Q12.SGlasser.png" uploaded into Moodle
+
+```{r, echo=FALSE}
+line_point_slope = function(x, x1, y1, slope)
+{
+  get_y_intercept = 
+    function(x1, y1, slope) 
+      return(-(x1 * slope) + y1)
+  
+  linear = 
+    function(x, yint, slope) 
+      return(yint + x * slope)
+  
+  return(linear(x, get_y_intercept(x1, y1, slope), slope))
+}
+
+```
+
+
+
+```{r}
+
+png(
+  filename = here("images", "Q12.SGlasser.png"),
+  width = 1500, height = 1000, 
+  res = 180, units = "px")
+
+plot(y~ x, data = datm, pch = 9, col="darkgreen", main="random uniform and normal dist. scatter", xlab= "random uniform #s", ylab="random normal #s")
+curve(line_point_slope(x, guess_x, guess_y, guess_slope), add = T)
+
+dev.off()
+
+```
+
+
+
+#### Q13
+
+Random Data Model Residuals 
+
+
+```{r}
+
+dd<-line_point_slope(datm$x, guess_x, guess_y, guess_slope)
+
+datm$y_predicted=dd
+
+datm$resids<-datm$y-datm$y_predicted
+
+sum(datm$resids)
+
+
+```
+
+
+
+
+#### Q14 
+
+Random Data Model Residual Plot
+
+```{r, echo=FALSE}
+plot(datm$resids~datm$y_predicted, main="Relationship between predicted 'y' values and residuals", xlab="residuals", ylab="predicted 'y' values")
+
+hist(datm$resids, main="histogram of residuals", xlab="residuals")
+
+```
+
+

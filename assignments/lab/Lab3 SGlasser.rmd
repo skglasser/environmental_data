@@ -1,0 +1,248 @@
+---
+title: 'LAB: Data Exploration and Deterministic Functions'
+author: "Sonja"
+date: "22/9/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+require(here)
+here("C:/Users/Zonj/Documents/Universites_Research/UMass/courses/ECO 602_634 environ stats/environmental_data")
+#install.packages("psych")
+require(psych)
+```
+
+
+```{r, echo=FALSE}
+#check out pairs.panels function from the psych package. 
+#pairs.panels(iris)
+
+#save file to an image and set sizes of image. 
+##png(filename=here("images folder"),"demo_images.png"), width = 1600, length = 1400)
+#pair.panels(iris)
+#dev.off()
+```
+
+
+```{r, echo=FALSE}
+### call in dataframes
+dat_bird = read.csv(
+  here("data", "bird.sta.csv")
+)
+#head(dat_bird)
+
+dat_habitat= read.csv(
+  here("data", "hab.sta.csv")
+)
+#head(dat_habitat)
+```
+
+
+```{r, echo=FALSE}
+
+### Merge datasets
+dat_all <- merge(dat_bird, dat_habitat)
+
+#plot(ba.tot ~ elev, data = dat_all)
+
+```
+
+
+```{r, echo=FALSE}
+### Convert bird data to presence/absence
+#sample(dat_all$CEWA, 100)
+
+
+cewa_present_absent<-as.numeric(dat_all$CEWA > 1)
+
+```
+
+
+
+```{r, echo=FALSE}
+### PLOT the presence abssence data
+#plot(x = dat_all$elev, y = cewa_present_absent)
+
+```
+
+
+```{r, echo=FALSE}
+### Visually estimating the parameters of the curve
+# Function to calculate the logistic parameter a given the slope and midpoint
+get_logistic_param_a = function(slope, midpoint)
+{
+  b = slope / 4
+  return (-midpoint * (slope / 4))
+}
+
+# Function to calculate the logistic parameter b given the slope
+get_logistic_param_b = function(slope)
+{
+  return (slope / 4)
+}
+
+
+# Calculate the value of the logistic function at x, given the parameters a and b.
+logistic = function(x, a, b)
+{
+  val = exp(a + b * x)
+  return(val / (1 + val))
+}
+
+# Calculate the value of the logistic function at x, given a slope and midpoint.
+logistic_midpoint_slope = function(x, midpoint, slope)
+{
+  b = get_logistic_param_b(slope)
+  a = get_logistic_param_a(slope, midpoint)
+  return(logistic(x, a, b))
+}
+
+```
+
+
+
+```{r, echo=FALSE}
+### Logistic Fit 1
+#plot(x = dat_all$elev, y = cewa_present_absent)
+#curve(logistic_midpoint_slope(x, midpoint = 400, slope = 0.1), add = TRUE)
+```
+
+
+
+```{r, echo=FALSE}
+### Logistic Fit 2
+#plot(x = dat_all$elev, y = cewa_present_absent)
+#curve(logistic_midpoint_slope(x, midpoint = 400, slope = -0.1), add = TRUE)
+
+```
+
+
+
+```{r, echo=FALSE}
+
+### Logistic Fit 3
+#plot(x = dat_all$elev, y = cewa_present_absent)
+#curve(logistic_midpoint_slope(x, midpoint = 400, slope = -0.05), add = TRUE)
+
+```
+
+#### Worked with JT Larkin
+
+
+
+### Learning objectives, technical sills and concepts:
+
+
+#### - Data exploration
+#### - Deterministic function: the logistic curve
+#### - Pretty pair plots
+
+
+
+### Introduction to Lab 3
+
+#### This lab is an extension of the individual assignment ‘Data Exploration and Deterministic Functions’ from the lecture course.
+
+### Q1
+
+
+ Basal area is the total density of trees measured as live and dead (m2 per ha). 
+
+
+
+### Q2
+
+
+Pairs plot of terrain variables and basal area
+
+```{r, echo=FALSE}
+
+pairs.panels(dat_all[c("elev", "aspect", "slope", "ba.tot")])
+
+
+```
+
+
+### Q3
+
+
+##### Spp. 1 : BUSHTIT
+
+
+```{r, echo= FALSE }
+
+BUSH_present_absent<-as.numeric(dat_all$BUSH >= 1)
+
+```
+
+
+```{r, echo=FALSE}
+plot(x = dat_all$ba.tot, y = BUSH_present_absent, main = "Presence/Absence of Bushtit to Total Basal Tree Area",
+  cex = 3,
+  pch=16,
+    col = adjustcolor("goldenrod1",alpha.f = 0.2),
+  xlab = "total basal area",
+  ylab = "Bushtit occurance")
+curve(
+  logistic_midpoint_slope
+  (x, midpoint = 50, 
+    slope = -0.8), 
+  add = TRUE, col = "darkorchid3", lwd=2 ) 
+
+```
+
+
+### Q4
+
+
+The Bushtit birds seem to have presence around lower values of the total basal area, from around 0 to 50 (m2 per ha). There are no records of presence of the Bushtit after around 60 (m2 per ha), which leads me to believe that these bird species prefer low tree cover. A logistic model seems like a good fit because there is a concentration of point all together in one area then a clear drop off after a certain point. 
+
+
+```{r, echo=FALSE}
+
+STJA_present_absent<-as.numeric(dat_all$STJA>= 1)
+
+```
+
+### Q5
+
+
+#### Spp. 2 : Steller's Jay
+
+```{r, echo=FALSE }
+
+plot(x = dat_all$ba.tot, y = STJA_present_absent, main = "Presence/Absence of Steller's Jay to Total Basal Tree Area",
+  cex = 3,
+  pch=16,
+    col = adjustcolor("blue",alpha.f = 0.2),
+  xlab = "total basal area",
+  ylab = "Steller's Jay occurance")
+curve(
+  logistic_midpoint_slope
+  (x, midpoint = 80, 
+    slope = -0.3), 
+  add = TRUE, col = "orange", lwd=2 ) 
+
+
+```
+### Q6 
+
+The Steller's Jay seem to have presence around from the lower to the middle of the total basal area, from around 0 to 100 (m2 per ha). There are no records of presence of the Steller's Jay after around 150 (m2 per ha), which leads me to believe that these bird species prefer low-mid tree cover. A logistic model seems like a good fit because there is a concentration of point all together in one area then a clear drop off after a certain point. The Steller's Jay seems to have a wider distribution in a wider range of total basal area values than the Bushtit bird.
+
+### Q7 & Q8
+
+```{r}
+sum(dat_all$GRJA)
+```
+There are 181 Gray Jays
+
+### Q9 & Q10
+
+```{r}
+
+sum(as.numeric(dat_all$GRJA>= 1))
+
+```
+There are 110 sampling sites in which Gray Jays were observed.
+
+

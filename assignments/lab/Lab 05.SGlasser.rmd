@@ -1,0 +1,300 @@
+---
+title: "S.Glasser Lab 5"
+author: "Sonja"
+date: "6/10/2021"
+output: html_document
+---
+
+### Lab 5: Uncertainty, Samples, and Populations
+
+
+##### Worked with:  
+
+Aliza Fassler and Justin Roch
+
+#### Learning objectives, technical skills and concepts:
+ 
+ 
+- Random number generation
+
+- Distribution Functions
+
+- Building custom functions
+
+- Fitting deterministic models
+
+- Calculating residuals
+
+- Defining and quantifying error
+
+
+##### Instructions
+
+Your assignment is to examine the data set provided (dispersal.csv) and find at least three alternative mathematical functions to describe the apparent relationship between juvenile dispersal and distance. The overall goals are for you to
+
+1. Examine the data set. Plot the relationship between juvenile dispersal (disp.rate.ftb) and distance (dist.class).
+
+2. Visually parameterize linear, exponential, and Ricker functions via trial-and-error to fit the data.
+
+Note: Be patient, we’ll eventually use R’s power to automatically fit model parameters. For now, the goal is graphical intuition.
+
+3. Calculate the residuals and propose a distribution to model the errors.
+
+
+```{r, echo=FALSE}
+
+require(here)
+
+dispersal = read.csv(here("data", "dispersal.csv"))
+
+```
+
+
+#### Q1
+
+```{r}
+exp_fun = function(x, a, b) 
+{
+  return(a * exp(-b * x))
+}
+
+```
+
+#### Q2
+
+```{r, echo=FALSE}
+curve1 <-curve(
+  exp_fun(x, 1.9, 0.1), 
+  from = 0, to = 30, add = FALSE, 
+  main = "Four Negative Exponential Curves",
+  ylab = "f(x)", xlab = "x")
+
+curve2<-curve(
+  exp_fun(x, 1.9, 0.3), 
+  from = 0, to = 30, add = TRUE,
+  type="l", lty=2)
+
+
+curve3<-curve(
+  exp_fun(x, 1.2, 0.2), 
+  from = 0, to = 30, add = TRUE, 
+  col="red")
+
+
+curve4<-curve(
+  exp_fun(x, 1.2, 0.4), 
+  from = 0, to = 30, add = TRUE, 
+  col="red",
+  type="l", lty=2)
+
+
+```
+
+
+
+#### Q3
+
+When you vary the value for the parameter a in the exponential function the y intercept changes position. In this case the curves with a = 1.9 begin higher on the y axis than the curves with a = 1.2. 
+
+
+
+#### Q4
+
+When you vary the value for the parameter b in the exponential function the slopes or the rate of decline becomes more steep. In this case the curves with b = 0.1 has the most shallow and steady rate of decline (line with the solid black line) while the curve with b = 0.4 has the steepest rate of decline (dotted red line). 
+
+
+
+#### Q5 
+
+```{r, Ricker Function, echo=FALSE}
+ricker_fun = function(x, a, b) 
+{
+  return(a * x * exp(-b * x))
+}
+```
+
+
+```{r, echo=FALSE}
+curve(
+  ricker_fun(x, 25, 0.1), 
+  from = 0, to = 60, add = FALSE, 
+  main = "Six Ricker Curves",
+  ylab = "f(x)", xlab = "x")
+
+curve(
+  ricker_fun(x, 20, 0.2), 
+  from = 0, to = 60, add = TRUE,
+   type="l", lty=2)
+
+curve(
+  ricker_fun(x, 10, 0.2), 
+  from = 0, to = 60, add = TRUE,
+  type="l", lty=2)
+
+curve(
+  ricker_fun(x, 75, 0.3), 
+  from = 0, to = 60, add = TRUE,
+  col="red")
+
+curve(
+  ricker_fun(x, 50, 0.3), 
+  from = 0, to = 60, add = TRUE,
+   col="red",
+  type="l", lty=2)
+
+curve(
+  ricker_fun(x, 40, 0.3), 
+  from = 0, to = 60, add = TRUE,
+   col="red",
+  type="l", lty=2)
+
+
+```
+
+
+#### Q6 
+
+When you vary the value for the parameter "a" in the Ricker function the initial slope changes but also the maximum height of the curve changes in function of both the parameter "a" and "b". So the curves with larger "a" parameter has steeper initial slope. The height of the curve will be taller if the proportion of "a" to "b" is larger.  In this case the curve with a = 75 has a steeper initial slope than a curve with a = 10. And a curve with a = 25 and b = 0.1 will have a taller maximum height than a curve with a = 25 and b = 0.3. 
+
+
+
+#### Q7 
+
+Similar to Q6, the maximum height of the curve changes in function of both the parameter "a" and "b" and where the peak of the curve is located along the x axis depends on 1/b. So the while "b" has a smaller value the curve will be located closer to the y axis. For instance a maximum height of the curve with a value of b = 0.1 will be closer to the y axis than the curves with b = 0.3, while the maximum height will also be larger along with larger values of "a" as explained in Q6.
+
+
+
+#### Q8 
+
+I choose the to center the line on the midpoint of the data which I guessed to be x1 = 800 and y1 = 0.2. I then adjusted the relatively shallow slope to follow shape of how the points are scattered, slope = -0.0005.
+
+```{r, echo=FALSE}
+  line_point_slope = function(x, x1, y1, slope)
+  {
+    get_y_intercept = 
+      function(x1, y1, slope) 
+        return(-(x1 * slope) + y1)
+    
+    linear = 
+      function(x, yint, slope) 
+        return(yint + x * slope)
+    
+    return(linear(x, get_y_intercept(x1, y1, slope), slope))
+  }
+```
+
+
+
+
+#### Q9 
+
+Scatterplot of the salamander data with fitted linear model
+
+```{r, echo=FALSE}
+
+guess_x = 800
+guess_y = 0.2
+guess_slope = -0.0005
+
+
+plot(disp.rate.ftb~dist.class, data=dispersal, main= "Scatterplot with Linear Model", xlab="Distance Class", ylab="Dispersal rate First Time Breeders")
+curve(line_point_slope(x, guess_x, guess_y, guess_slope), add = T)
+
+```
+
+
+#### Q10 
+
+I chose the the "a" parameter value to be 1.2 so that the start of the negative exponential trend of the data points would all be captured. I chose a shallow exponential slope b = 0.003 so that the line would fall in the middle of the scattered data points.  
+
+
+
+#### Q11
+
+```{r, echo=FALSE}
+
+plot(disp.rate.ftb~dist.class, data=dispersal, main= "Scatterplot with Exponential Model", xlab="Distance Class", ylab="Dispersal rate First Time Breeders")
+curve(
+  exp_fun(x, 1.2, 0.003), 
+  from = 0, to = 1500, add = TRUE)
+
+```
+
+
+
+#### Q12 
+
+I chose the value a = 0.007 in order graph an initial slope that was most similar to how the data points ascend on the left side of the scatterplot. I chose the value b = 1/325 because at location 325 along the x axis represents the maximum height of the data points.  
+
+
+
+#### Q13 
+
+```{r, echo=FALSE}
+
+plot(disp.rate.ftb~dist.class, data=dispersal, main= "Scatterplot with Exponential Model", xlab="Distance Class", ylab="Dispersal rate First Time Breeders")
+curve(
+  ricker_fun(x, 0.007, 1/325), add = TRUE, 
+  main = "Six Ricker Curves",
+  ylab = "f(x)", xlab = "x")
+
+```
+
+
+
+#### Q14 
+
+Residual dataframes
+
+
+*resids_linear data frame*
+
+```{r}
+
+disp.line<-line_point_slope(dispersal$dist.class, guess_x, guess_y, guess_slope)
+
+dispersal$disp.rate.predicted=disp.line
+
+dispersal$resids_linear<-dispersal$disp.rate.ftb-dispersal$disp.rate.predicted
+
+```
+
+
+*resids_exp data frame*
+
+```{r}
+disp.exp<-exp_fun(dispersal$dist.class, 1.2, 0.003)
+
+dispersal$disp.rate.predicted.exp=disp.exp
+
+dispersal$resids_exp<-dispersal$disp.rate.ftb-dispersal$disp.rate.predicted.exp
+```
+
+
+
+*resids_ricker data frame*
+
+```{r}
+disp.ricker<-ricker_fun(dispersal$dist.class, 0.007, 1/325)
+
+dispersal$disp.rate.predicted.ricker=disp.ricker
+
+dispersal$resids_ricker<-dispersal$disp.rate.ftb-dispersal$disp.rate.predicted.ricker
+```
+
+
+
+
+#### Q15
+
+```{r, echo=FALSE}
+
+hist(dispersal$resids_linear, main="histogram of residuals linear model", xlab="residuals")
+
+hist(dispersal$resids_exp, main="histogram of residuals exponential model", xlab="residuals")
+
+hist(dispersal$resids_ricker, main="histogram of residuals Ricker model", xlab="residuals")
+
+```
+
+

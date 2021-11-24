@@ -1,0 +1,81 @@
+---
+title: "Untitled"
+author: "Sonja"
+date: "16/9/2021"
+output: html_document
+---
+
+
+Install packages
+```{r setup}
+install.packages("palmerpenguins")
+require(palmerpenguins)
+require(here)
+install.packages("here")
+```
+
+
+
+```{r, data set}
+penguins = data.frame(penguins)
+
+class(penguins)
+
+```
+
+```{r, mean calculation}
+
+mean(penguins$body_mass_g, na.rm = TRUE)
+head(penguins)
+summary(penguins)
+
+```
+
+```{r}
+
+pairs(penguins)
+
+
+pairs(penguins[, c("bill_length_mm", "flipper_length_mm", "body_mass_g")])
+
+
+plot(penguins$bill_length_mm, penguins$body_mass_g)
+
+```
+```{r}
+boxplot(penguins$bill_depth_mm)
+```
+```{r}
+boxplot(bill_depth_mm ~ sex, data = penguins)
+
+```
+
+```{r}
+par(mfrow = c(1, 2))
+boxplot(penguins$bill_depth_mm)
+boxplot(bill_depth_mm ~ sex, data = penguins)
+```
+
+```{r}
+coplot(body_mass_g ~ bill_depth_mm | sex, data = penguins) 
+
+
+```
+
+
+```{r}
+require(here)
+png(filename = here("basic_histogram.png"), width = 800, height = 600)
+hist(penguins$body_mass_g)
+dev.off()
+
+```
+
+```{r}
+
+png(filename = here("pairs_plot.png"), width = 800, height = 600)
+pairs(penguins[, c("bill_length_mm", "flipper_length_mm", "body_mass_g")])
+dev.off()
+
+```
+

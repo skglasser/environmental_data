@@ -1,0 +1,28 @@
+---
+title: "In-Class Ginkgo Data Exploration"
+author: "Sonja"
+date: "11/23/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+require(here)
+gingko = read.csv(here("data", "ginkgo_data_2021.csv"))
+```
+
+
+```{r}
+head(gingko)
+names(gingko)[names(gingko) == 'ï..site_id'] <- 'site_id'
+```
+```{r}
+
+boxplot(max_width~seeds_present, data=gingko, main="Gingko leaf width ~ Presence of seeds", xlab="Seeds Present", ylab="Max width of leaf (mm)")
+
+```
+I do not see real diff
+
+```{r}
+plot(max_width~max_depth, data=gingko, colour="site.id")
+```
+
