@@ -1,0 +1,358 @@
+---
+title: "Final Project: R Reference"
+author: "Sonja Glasser"
+date: "12/2/2021"
+output: html_document
+---
+
+# R Reference Guide {.tabset .tabset-pills}
+
+
+## Loading Data and Packages
+
+### library()
+
+The library function loads into the script or markdown file a package or dataframe previously loaded or available in the R base files. 
+
+```{r, warning=FALSE}
+# load in the palmer penguins dataframe from the R base files 
+library(palmerpenguins)
+
+```
+### require()
+
+This function does the same as the library function above, but the require function can be used within another function. 
+
+```{r}
+## Here we load the here function into the global environment by using the require funtion. 
+
+require(here)
+
+require(palmerpenguins)
+
+```
+
+
+### here()
+
+here() function is very useful to find files within the current working directory. You can specify which folder to pull or save a file to as long as you are navigating from the project root. 
+
+```{r}
+## We can call in the the ginkgo_data_2021.csv into the environment by adding here() into the read.csv() and which then tells R where to look for the file. 
+
+gingko<-read.csv(here("data", "ginkgo_data_2021.csv"))
+```
+
+
+
+## Data Structures
+
+### c()
+
+The function c() combines or concatenates its arguments into a vector (a 1-dimensional data structure consisting of 1 or more elements).
+
+*   All of the elements must be of the same type.
+*   I can’t combine character and numeric types in the same call to c()
+Here’s two examples using numeric and character data types:
+
+```{r}
+## Create a vector of numbers:
+num_vec  = c(1, 4, 8, 9, 13)
+
+## Create a vector of characters:
+char_vec = c("a", "fish", "data is cool")
+```
+
+
+```{r}
+## Typing the name of the vector into the console prints the contents
+num_vec
+
+```
+
+
+```{r}
+## The print() function accomplishes the same task:
+print(char_vec)
+```
+
+
+### length()
+
+Gives the length of a vector. The output is a single integer output that is the length of the vector. It basically counts up the number of items in a vector.
+
+```{r}
+## find the length of the number vector created above
+
+length(num_vec) 
+
+## find the length of the character vector 
+
+length(char_vec) 
+
+```
+### matrix()
+
+This function simply creates a matrix with a desired number of columns and rows. 
+
+```{r}
+## create a matrix with a vector 
+
+matrix(num_vec, nrow=2,ncol=3)
+
+```
+### data.frame()
+
+data.frame function is similar to the matrix function but it retains the variables. I will make a dataframe using the gingko data set and show the number of rows, columns and overall dimensions. 
+
+```{r}
+## I create a data frame with just two columns from the ginkgo dataframe
+width_petiole<-data.frame(gingko$max_width,gingko$petiole_length)
+nrow(width_petiole)
+ncol(width_petiole)
+dim(width_petiole)
+```
+
+## Subsetting
+
+### $, []
+
+- $ Subset a data frame by name: select one of the columns in the ginkgo data
+
+- [] Use subset by position to:
+select first row of the ginkgo data
+select the element in row 2, column 3
+select the 3rd column of the ginkgo data
+
+```{r}
+## create a vector with just the petiole length. 
+petiole<-gingko$petiole_length
+
+frst.row<-gingko[1,]
+scndcol.trdcol<-gingko[2,3]
+trd.col<-gingko[,3]
+```
+
+### subset()
+
+In order to select a set of data based on a categorical level, we can use the subset function. 
+
+```{r}
+
+## here I will subset just the Adelie penguin species from the penguin data set. 
+
+subset(penguins, species=="Adelie")
+
+```
+
+## Numerical Data Exploration
+
+### summary()
+
+The summary function gives a summary of various object types including models and dataframes. Each variable within the model or dataframe is individually summarized. The type of summary of each variable within the dataframe will depend on the type of variable. For variable with numeric values the summary will give you general summary statistics such as, min, max, median and mean and quartiles. For categorical variables the number of observations for each level type is reported. 
+
+```{r}
+## summary 
+summary(penguins)
+
+```
+### mean()
+
+the mean function is simply a function that calculates the mean of a given vector. For my purposes I think it would be better to use the mean function within the aggregate function in order to find the mean simultaneously for different factor levels. 
+
+```{r}
+## take the mean of bill length each penguin species. 
+
+aggregate(bill_length_mm~species, 
+            data=penguins, 
+          FUN= mean, 
+          na.rm=TRUE)
+
+
+```
+
+### sd()
+
+the sd function is simply a function that calculates the standard deviation of a given vector. For my purposes I think it would be better to use the sd function within the aggregate function in order to find the mean simultaneously for different factor levels. 
+
+```{r}
+## take the sd of bill length each penguin species. 
+
+aggregate(bill_length_mm~species, 
+            data=penguins, 
+          FUN= sd, 
+          na.rm=TRUE)
+
+```
+
+
+## Graphical Exploration
+
+
+### plot()
+
+The plot function is most useful for producing a generic scatter plot based on the values of two continuous numerical variables (x vs. y)
+
+```{r}
+
+## Using the ginkgo data, reate a scatterplot of max leaf depth (x) and max leaf width (y).
+
+plot(max_width~max_depth, 
+     data=gingko, 
+     col="blue", # color of point
+     pch=2, # shape of point
+     cex=.5, #size of point
+     main="Relationship between max depth and width of ginkgo leaves", 
+     xlab="max leaf depth (mm)", 
+     ylab = "max leaf width (mm)", 
+     xlim=c(20,150), 
+     ylim=c(20,150))
+
+```
+
+
+### hist()
+
+hist() simply creates a histogram of data values. This gives the general spread of the number of observations of given value. The breaks = argument tell the hist function the how many bins to divide up the data into. 
+
+```{r}
+##  Create a histogram of penguin flipper lengths
+
+hist(penguins$flipper_length_mm, 
+     breaks=9, 
+     main="Penguin flipper length value distribution", 
+     xlab = "Flipper length (mm)")
+
+
+```
+
+### boxplot()
+
+the boxplot function creates a box and whisker plots of values depending on the categorical variables associated. 
+
+```{r}
+## simple boxplot of ginkgo petiole lengths
+boxplot(gingko$petiole_length, main="Petiole length of gingko leaves", xlab="petiole len")
+
+## conditional boxplot of petiole length conditioned on the seeds_present column
+
+boxplot(petiole_length ~ seeds_present, 
+        data = gingko, 
+        main="Petiole length for trees \nwith and without seeds present", 
+        xlab="seeds present",
+        ylab="petiole length (mm)")
+
+```
+
+### multi-panel figure
+
+Using the par() and mrow= creates a figure composed of multiple figures. 
+
+
+```{r}
+par(mfrow = c(2, 2))
+hist(penguins$flipper_length_mm, 
+     breaks=9, 
+     main="Penguin flipper length values distribution", 
+     xlab = "Flipper length (mm)")
+hist(penguins$bill_length_mm, 
+     breaks=9, 
+     main="Penguin bill length values distribution", 
+     xlab = "Bill length (mm)")
+hist(penguins$bill_depth_mm, 
+     breaks=9, 
+     main="Penguin bill depth values distribution", 
+     xlab = "Bill depth (mm)")
+hist(penguins$body_mass_g, 
+     breaks=9, 
+     main="Penguin body mass values distribution", 
+     xlab = "Body mass (g)")
+
+
+```
+
+
+## Distribution Functions
+
+Are a basic concept in probability theory. These distribution can be used to describe a cumulative or continuous likelihood or the probability of a discrete value. 
+In the examples below I will use the normal and binomial distributions to find cumulative probability or likelihood of a range of values, the quantile range of values and of a discrete value. 
+
+The d-functions calculate the likelihood of a single event. 
+
+The p-functions calculates the cumulative probability or a range of events. 
+
+The q-functions calculates the quantile function. 
+
+### dnorm()
+
+dnorm () give the relative likelihood of a single event of values that are normally distributed. Or the height of the normally distributed curve at a certain point. 
+
+```{r}
+
+## here is the dnorm function
+
+dnorm(100, mean=100, sd=15)
+
+```
+
+
+###  pnorm()
+
+pnorm () give the likelihood of a range of events that are normally distributed
+
+```{r}
+
+## here is the pnorm function
+
+1-pnorm(25, mean=50, sd=10)
+
+```
+
+### qnorm()
+
+qnorm () finds the value that is related to a certain quantile. It tells you at which value what ever defined percentage of the data lies below. 
+
+```{r}
+
+## here is the qnorm function
+
+qnorm(0.95, mean=50, sd=10)
+
+```
+
+### dbinom ()
+
+the dbinom () gives the probability of the binomial distribution given a values of x, a certain number of trials and the probability of success of the trials. 
+
+```{r}
+
+## here is the dbinom function
+
+dbinom(x = 13, size = 30, prob = 0.24 )
+```
+
+### pbinom ()
+
+pbinom() calculates the values of the cumulative density function given a value of q, sample size and probability of succcess on each trial. It give the area to the left of a value of q.
+
+
+```{r}
+
+## find the probability of 2 or fewer successes during 5 trials where the probability of success on each trial is 0.5
+
+pbinom(2, size=5, prob=.5)
+
+```
+
+### qbinom ()
+
+qbinom give the value of the inverse cumulative density function. 
+
+```{r}
+#find the 10th quantile of a binomial distribution with 50 trials and prob of success on each trial = 0.6
+
+qbinom(.10, size=50, prob=.6)
+```
+
+
+...

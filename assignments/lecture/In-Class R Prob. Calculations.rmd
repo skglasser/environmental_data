@@ -60,7 +60,6 @@ I can also use it to ask what the probability of observing a count greater than 
 ```
 
 
-How could I change the code to calculate the probability of observing seven or greater? use the compliment of 1- 6 or fewer to see prob of 7 or greater. 
 
 ```{r}
 1 - ppois(q = 6, lambda = 10.4)

@@ -9,14 +9,79 @@ output: html_document
 
 #### Learning Objectives
 
-Review 1- and 2-sample t-tests
-Perform a 1-way Analysis of Variance (ANOVA)
-Perform a simple- and multiple- linear regressions
-Interpret model coefficient tables
-Interpret ANOVA table
+* Review 1- and 2-sample t-tests
+
+* Perform a 1-way Analysis of Variance (ANOVA)
+
+* Perform a simple- and multiple- linear regressions
+
+* Interpret model coefficient tables
+
+* Interpret ANOVA table
+
 
 ```{r setup, include=FALSE}
 require(palmerpenguins)
 ```
+
+##### Q1
+
+```{r, echo=FALSE}
+boxplot(body_mass_g~ sex*species,
+    data = penguins, main="Penguin Body Mass ~ Species & Sex", ylab=" body mass (g)", xlab = " ", names=c("female\nAdelie", "male\nAdelie", "female\nChinstrap", "male\nChinstrap", "female\nGentoo", "male\nGentoo"), las=3)
+```
+
+
+
+##### Q2
+
+It appears that the body mass of the male penguins of Gentoo and Adelie are significantly different from that of the female penguins. This apparent difference is due to the clear separation of the median weight values and the second and third quartile ranges between Adelie and Gentoo male and female penguins.  
+
+
+##### Q3
+I believe that adding sex to the model will greatly improve the model fit. If we look at the boxplots of both sexes of the Gentoo penguins we see that if they were combined the Gentoo penguin weight might not appear as significantly different from the other penguins because the female penguins weigh so much less than the male penguins. 
+
+
+
+##### Q4
+
+```{r}
+fit_both = lm(body_mass_g ~ sex*species, data = penguins)
+summary(fit_both)
+```
+
+
+
+##### Q5
+
+
+The base case for the two-way model that includes sex and species is, sex = female, penguin = Adelie. 
+
+
+
+##### Q6
+
+
+The names of the two coefficients needed to calculate the average mass of female Chinstrap penguins are "Intercept" and "speciesChinstrap". 
+
+
+##### Q7
+
+
+The predicted average mass of the female Chinstrap penguins is  3527.21 grams. 
+
+
+##### Q8 
+
+```{r}
+dat_mass_means = aggregate(
+  body_mass_g ~ species*sex,
+  data = penguins,
+  FUN = mean)
+dat_mass_means
+```
+
+The observed mass of the female Chinstrap penguins is 3527.206	grams. 
+
 
 
